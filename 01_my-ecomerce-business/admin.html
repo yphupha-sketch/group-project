@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Natural Bliss</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .stat-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 700; color: var(--gold-dark); font-family: 'Playfair Display', serif; }
+    .stat-card .label { font-size: 0.82rem; color: var(--text-light); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+    }
+    .modal {
+      background: var(--white); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+    .modal h3 { font-family: 'Playfair Display', serif; margin-bottom: 1rem; color: var(--dark); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">Natural Bliss (Admin)</a>
+    <nav>
+      <a href="index.html">หน้าร้าน</a>
+      <span id="userDisplay"><a href="login.html">เข้าสู่ระบบ</a></span>
+    </nav>
+  </nav>
+
+  <div class="container">
+    <h1 class="page-title">แดชบอร์ดผู้ดูแลระบบ</h1>
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="admin-layout">
+      <div class="admin-sidebar">
+        <button class="active" onclick="showAdminTab('orders')">📦 คำสั่งซื้อ</button>
+        <button onclick="showAdminTab('products')">🧼 สินค้า</button>
+        <button onclick="showAdminTab('customers')">👥 ลูกค้า</button>
+      </div>
+      <div class="admin-content" id="adminContent"></div>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 Natural Bliss Soap. All rights reserved.</footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let editingProductId = null;
+
+    function renderStats() {
+      const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card"><div class="num">${products.length}</div><div class="label">สินค้าทั้งหมด</div></div>
+        <div class="stat-card"><div class="num">${orders.length}</div><div class="label">คำสั่งซื้อทั้งหมด</div></div>
+        <div class="stat-card"><div class="num">${customers.length}</div><div class="label">ลูกค้า</div></div>
+        <div class="stat-card"><div class="num">฿${totalRevenue.toLocaleString()}</div><div class="label">รายได้รวม</div></div>
+      `;
+    }
+
+    function showAdminTab(tab) {
+      document.querySelectorAll('.admin-sidebar button').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.admin-sidebar button[onclick*="'${tab}'"]`).classList.add('active');
+
+      const content = document.getElementById('adminContent');
+      if (tab === 'orders') renderOrders(content);
+      else if (tab === 'products') renderAdminProducts(content);
+      else if (tab === 'customers') renderCustomers(content);
+    }
+
+    function renderOrders(container) {
+      if (orders.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8">ไม่มีคำสั่งซื้อ</p>';
+        return;
+      }
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead><tr>
+            <th>รหัสคำสั่งซื้อ</th><th>ลูกค้า</th><th>สินค้า</th><th>ยอดรวม</th><th>ชำระเงิน</th><th>สถานะ</th><th>วันที่</th><th>จัดการ</th>
+          </tr></thead>
+          <tbody>
+            ${orders.map(o => `
+              <tr>
+                <td><strong>${o.id}</strong></td>
+                <td>${o.customerName}<br><small style="color:#94a3b8">${o.customerPhone}</small></td>
+                <td>${o.items.map(i => `${i.productName} x${i.quantity}`).join('<br>')}</td>
+                <td>฿${o.total.toLocaleString()}</td>
+                <td>${o.paymentMethod}</td>
+                <td><span class="status-badge status-${o.status}">${o.status === 'pending' ? 'รอดำเนินการ' : o.status === 'shipped' ? 'จัดส่งแล้ว' : o.status === 'delivered' ? 'ได้รับแล้ว' : 'ยกเลิก'}</span></td>
+                <td>${o.createdAt}</td>
+                <td>
+                  <select onchange="updateOrderStatus('${o.id}', this.value)" style="padding:0.3rem;border:2px solid #e2e8f0;border-radius:6px;font-size:0.8rem">
+                    <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>รอดำเนินการ</option>
+                    <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>จัดส่งแล้ว</option>
+                    <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>ได้รับแล้ว</option>
+                    <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>ยกเลิก</option>
+                  </select>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function updateOrderStatus(orderId, newStatus) {
+      const order = orders.find(o => o.id === orderId);
+      if (order) { order.status = newStatus; showToast('อัปเดตสถานะแล้ว'); showAdminTab('orders'); }
+    }
+
+    function renderAdminProducts(container) {
+      container.innerHTML = `
+        <div style="margin-bottom:1rem"><button class="btn btn-success" onclick="showAddProductForm()">+ เพิ่มสินค้า</button></div>
+        <table class="admin-table">
+          <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ประเภท</th><th>ราคา</th><th>น้ำหนัก</th><th>จัดการ</th></tr></thead>
+          <tbody>
+            ${products.map(p => `
+              <tr>
+                <td>${p.id}</td>
+                <td>${p.name}</td>
+                <td>${p.type}</td>
+                <td>฿${p.price}</td>
+                <td>${p.weight}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary" onclick="editProduct('${p.id}')">แก้ไข</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">ลบ</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function showAddProductForm() { editingProductId = null; showProductModal(); }
+    function editProduct(id) { editingProductId = id; showProductModal(); }
+
+    function showProductModal() {
+      const p = editingProductId ? products.find(x => x.id === editingProductId) : null;
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="modal-overlay" id="productModal" onclick="if(event.target===this)closeProductModal()">
+          <div class="modal">
+            <h3>${p ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h3>
+            <div class="form-group"><label>ชื่อสินค้า</label><input type="text" id="pfName" value="${p ? p.name : ''}"></div>
+            <div class="form-group">
+              <label>ประเภท</label>
+              <select id="pfType">
+                <option value="bar" ${p && p.typeEn === 'bar' ? 'selected' : ''}>สบู่ก้อน</option>
+                <option value="liquid" ${p && p.typeEn === 'liquid' ? 'selected' : ''}>สบู่เหลว</option>
+                <option value="body" ${p && p.typeEn === 'body' ? 'selected' : ''}>สบู่เหลวอาบน้ำ</option>
+              </select>
+            </div>
+            <div class="form-group"><label>ราคา (บาท)</label><input type="number" id="pfPrice" value="${p ? p.price : ''}"></div>
+            <div class="form-group"><label>น้ำหนัก/ปริมาตร</label><input type="text" id="pfWeight" value="${p ? p.weight : ''}"></div>
+            <div class="form-group"><label>ส่วนประกอบ</label><input type="text" id="pfIngredients" value="${p ? p.ingredients : ''}"></div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem">
+              <button class="btn btn-primary" onclick="saveProduct()">บันทึก</button>
+              <button class="btn btn-outline" onclick="closeProductModal()">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    function closeProductModal() {
+      const m = document.getElementById('productModal');
+      if (m) m.remove();
+    }
+
+    function saveProduct() {
+      const name = document.getElementById('pfName').value.trim();
+      const typeEn = document.getElementById('pfType').value;
+      const price = parseInt(document.getElementById('pfPrice').value);
+      const weight = document.getElementById('pfWeight').value.trim();
+      const ingredients = document.getElementById('pfIngredients').value.trim();
+      if (!name || !price || !weight) { showToast('กรุณากรอกข้อมูลให้ครบ'); return; }
+
+      const typeMap = { bar: 'สบู่ก้อน', liquid: 'สบู่เหลว', body: 'สบู่เหลวอาบน้ำ' };
+      if (editingProductId) {
+        const p = products.find(x => x.id === editingProductId);
+        if (p) { Object.assign(p, { name, type: typeMap[typeEn], typeEn, price, weight, ingredients }); }
+        showToast('แก้ไขสินค้าเรียบร้อย');
+      } else {
+        const newId = `${typeEn === 'bar' ? 'BAR' : typeEn === 'liquid' ? 'LIQ' : 'BDY'}-${String(products.length + 1).padStart(3, '0')}`;
+        products.push({ id: newId, name, type: typeMap[typeEn], typeEn, price, weight, netWeight: weight, ingredients: ingredients || 'ส่วนประกอบจากธรรมชาติ', expirationDate: '24 เดือนนับจากวันที่ผลิต', description: name, image: `https://placehold.co/300x300/e2e8f0/64748b?text=${encodeURIComponent(name.substring(0, 10))}` });
+        showToast('เพิ่มสินค้าเรียบร้อย');
+      }
+      closeProductModal();
+      renderStats();
+      showAdminTab('products');
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('แน่ใจว่าต้องการลบสินค้านี้?')) return;
+      const idx = products.findIndex(p => p.id === id);
+      if (idx !== -1) { products.splice(idx, 1); showToast('ลบสินค้าแล้ว'); }
+      renderStats();
+      showAdminTab('products');
+    }
+
+    function renderCustomers(container) {
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead><tr><th>รหัส</th><th>ชื่อ</th><th>ที่อยู่</th><th>เบอร์โทร</th></tr></thead>
+          <tbody>
+            ${customers.map(c => `
+              <tr><td>${c.id}</td><td>${c.name}</td><td style="max-width:300px;font-size:0.85rem">${c.address}</td><td>${c.phone}</td></tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      renderStats();
+      showAdminTab('orders');
+    });
+  </script>
+</body>
+</html>

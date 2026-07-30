@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ - Natural Bliss</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">Natural Bliss</a>
+    <nav>
+      <a href="index.html">สินค้า</a>
+      <a href="cart.html" class="cart-icon">🛒 ตะกร้า <span class="cart-badge" id="cartBadge" style="display:none">0</span></a>
+      <span id="userDisplay"><a href="login.html">เข้าสู่ระบบ</a></span>
+    </nav>
+  </nav>
+
+  <div class="container">
+    <div class="auth-container">
+      <h2>เข้าสู่ระบบ</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>ชื่อผู้ใช้</label>
+          <input type="text" id="loginUsername" placeholder="กรุณากรอกชื่อผู้ใช้" required>
+        </div>
+        <div class="form-group">
+          <label>รหัสผ่าน</label>
+          <input type="password" id="loginPassword" placeholder="กรุณากรอกรหัสผ่าน" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">เข้าสู่ระบบ</button>
+      </form>
+      <div class="auth-link">
+        ยังไม่มีบัญชี? <a href="signup.html">สมัครสมาชิก</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 Natural Bliss Soap. All rights reserved.</footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      if (!username || !password) { showToast('กรุณากรอกข้อมูลให้ครบ'); return; }
+
+      const existingUsers = JSON.parse(localStorage.getItem('soapShopUsers') || '[]');
+      const user = existingUsers.find(u => u.username === username && u.password === password);
+      if (user) {
+        currentUser = { name: user.name, username: user.username, address: user.address, phone: user.phone };
+        localStorage.setItem('soapShopUser', JSON.stringify(currentUser));
+        showToast('เข้าสู่ระบบสำเร็จ');
+        const params = new URLSearchParams(window.location.search);
+        setTimeout(() => window.location.href = params.get('redirect') || 'index.html', 500);
+      } else {
+        showToast('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      }
+    }
+  </script>
+</body>
+</html>
