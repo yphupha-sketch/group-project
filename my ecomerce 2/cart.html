@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - Soap Store</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">SOAP STORE ✦</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="login.html" id="userDisplay">Login / Register</a>
+      <a href="cart.html" class="active cart-icon">🛒 <span class="cart-badge" id="cartBadge" style="display:none">0</span></a>
+    </nav>
+  </nav>
+
+  <div class="container">
+    <h1 class="page-title">Shopping Cart</h1>
+    <p class="page-subtitle">Review your items before checkout</p>
+
+    <div id="emptyCart" class="hidden" style="text-align:center;padding:3rem">
+      <p style="font-size:1.1rem;color:var(--text-light)">Your cart is empty</p>
+      <a href="products.html" class="btn btn-primary" style="margin-top:1rem">Browse Products</a>
+    </div>
+
+    <div class="cart-page" id="cartPage">
+      <div class="cart-items" id="cartItemsContainer"></div>
+      <div class="cart-summary" id="cartSummary"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div>&copy; 2026 Soap Store. All rights reserved.</div>
+      <div class="footer-social">
+        <a href="#">Facebook</a>
+        <a href="#">Instagram</a>
+        <a href="#">Line</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
