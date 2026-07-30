@@ -127,3 +127,84 @@ const customers = generateCustomers();
 const orders = generateOrders(products, customers);
 let currentUser = null;
 let cart = [];
+
+function seedDatabase() {
+  if (!localStorage.getItem('soapShopUsers')) {
+    const users = [
+      {
+        name: 'John Doe',
+        email: 'user@soapstore.com',
+        password: 'password123',
+        phone: '0812345678',
+        address: '123/45 Sukhumvit Rd., Bangkok, Thailand'
+      },
+      {
+        name: 'Admin',
+        email: 'admin@soapstore.com',
+        password: 'admin123',
+        phone: '0898765432',
+        address: 'Admin Office, Soap Store HQ, Bangkok'
+      }
+    ];
+    localStorage.setItem('soapShopUsers', JSON.stringify(users));
+  }
+
+  if (!localStorage.getItem('soapShopOrders')) {
+    const userOrders = [
+      {
+        id: 'ORD-016',
+        customerName: 'John Doe',
+        customerEmail: 'user@soapstore.com',
+        customerAddress: '123/45 Sukhumvit Rd., Bangkok, Thailand',
+        customerPhone: '0812345678',
+        items: [
+          { productId: products[0].id, productName: products[0].name, price: products[0].price, quantity: 2, scent: products[0].scent, formula: products[0].formula, size: products[0].size },
+          { productId: products[2].id, productName: products[2].name, price: products[2].price, quantity: 1, scent: products[2].scent, formula: products[2].formula, size: products[2].size }
+        ],
+        total: products[0].price * 2 + products[2].price,
+        paymentMethod: 'Bank Transfer',
+        status: 'delivered',
+        statusIndex: 4,
+        createdAt: '2026-07-15'
+      },
+      {
+        id: 'ORD-017',
+        customerName: 'John Doe',
+        customerEmail: 'user@soapstore.com',
+        customerAddress: '123/45 Sukhumvit Rd., Bangkok, Thailand',
+        customerPhone: '0812345678',
+        items: [
+          { productId: products[5].id, productName: products[5].name, price: products[5].price, quantity: 3, scent: products[5].scent, formula: products[5].formula, size: products[5].size }
+        ],
+        total: products[5].price * 3,
+        paymentMethod: 'Credit/Debit Card',
+        status: 'shipping',
+        statusIndex: 3,
+        createdAt: '2026-07-22'
+      },
+      {
+        id: 'ORD-018',
+        customerName: 'John Doe',
+        customerEmail: 'user@soapstore.com',
+        customerAddress: '123/45 Sukhumvit Rd., Bangkok, Thailand',
+        customerPhone: '0812345678',
+        items: [
+          { productId: products[1].id, productName: products[1].name, price: products[1].price, quantity: 1, scent: products[1].scent, formula: products[1].formula, size: products[1].size },
+          { productId: products[3].id, productName: products[3].name, price: products[3].price, quantity: 2, scent: products[3].scent, formula: products[3].formula, size: products[3].size },
+          { productId: products[7].id, productName: products[7].name, price: products[7].price, quantity: 1, scent: products[7].scent, formula: products[7].formula, size: products[7].size }
+        ],
+        total: products[1].price + products[3].price * 2 + products[7].price,
+        paymentMethod: 'PromptPay',
+        status: 'pending',
+        statusIndex: 0,
+        createdAt: '2026-07-28'
+      }
+    ];
+    localStorage.setItem('soapShopOrders', JSON.stringify(userOrders));
+
+    const storedOrders = JSON.parse(localStorage.getItem('soapShopOrders') || '[]');
+    orders.push(...storedOrders);
+  }
+}
+
+seedDatabase();

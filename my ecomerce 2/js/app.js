@@ -1,3 +1,18 @@
+function saveOrders() {
+  localStorage.setItem('soapShopOrders', JSON.stringify(orders));
+}
+
+function saveCart() {
+  localStorage.setItem('soapShopCart', JSON.stringify(cart));
+}
+
+function loadCart() {
+  const saved = localStorage.getItem('soapShopCart');
+  if (saved) {
+    try { cart = JSON.parse(saved); } catch (e) { cart = []; }
+  }
+}
+
 function showToast(message) {
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();
@@ -38,12 +53,14 @@ function addToCart(productId, qty = 1, scent, formula, size) {
     });
   }
   updateCartBadge();
+  saveCart();
   showToast(`Added "${product.name}" (x${qty}) to cart`);
 }
 
 function removeFromCart(key) {
   cart = cart.filter(item => item.key !== key);
   updateCartBadge();
+  saveCart();
   renderCart();
 }
 
@@ -57,6 +74,7 @@ function updateQuantity(key, delta) {
   }
   renderCart();
   updateCartBadge();
+  saveCart();
 }
 
 function getCartTotal() {
@@ -311,6 +329,8 @@ function placeOrder() {
 
   cart = [];
   updateCartBadge();
+  saveCart();
+  saveOrders();
   showToast('Order placed successfully!');
   setTimeout(() => window.location.href = 'tracking.html?id=' + orders[orders.length - 1].id, 1000);
 }
@@ -439,6 +459,8 @@ function renderAdminCategories() {
 function logout() {
   currentUser = null;
   localStorage.removeItem('soapShopUser');
+  cart = [];
+  saveCart();
   showToast('Logged out');
   window.location.href = 'index.html';
 }
@@ -449,10 +471,21 @@ document.addEventListener('DOMContentLoaded', function () {
     try { currentUser = JSON.parse(saved); } catch (e) { currentUser = null; }
   }
 
+  const savedOrders = localStorage.getItem('soapShopOrders');
+  if (savedOrders) {
+    try {
+      const parsed = JSON.parse(savedOrders);
+      parsed.forEach(o => { if (!orders.find(ex => ex.id === o.id)) orders.push(o); });
+    } catch (e) {}
+  }
+
+  loadCart();
+
   const userDisplay = document.getElementById('userDisplay');
   if (userDisplay) {
     if (currentUser) {
-      userDisplay.innerHTML = `<span class="user-info">${currentUser.name}</span> <a href="#" onclick="logout()" class="logout-link">Logout</a>`;
+      const adminLink = currentUser.email === 'admin@soapstore.com' ? ' <a href="admin.html" style="color:var(--gold);font-size:0.8rem;font-weight:600">Admin</a>' : '';
+      userDisplay.innerHTML = `<a href="user.html" class="user-info">${currentUser.name}</a>${adminLink} <a href="#" onclick="logout()" class="logout-link">Logout</a>`;
     } else {
       userDisplay.innerHTML = '<a href="login.html">Login / Register</a>';
     }
