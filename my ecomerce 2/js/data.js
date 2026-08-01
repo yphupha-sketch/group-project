@@ -53,7 +53,7 @@ function generateProducts(count = 18) {
       size: randomPick(sizes),
       availableSizes: [randomPick(sizes), randomPick(sizes), randomPick(sizes)],
       stock: randomInt(5, 60),
-      image: `https://placehold.co/300x300/d4d4d4/555555?text=${encodeURIComponent(name)}`
+      image: `image/thai.JPG`
     });
   }
   return products;
