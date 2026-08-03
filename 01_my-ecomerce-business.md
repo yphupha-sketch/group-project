@@ -34,3 +34,4 @@
 - random generate products price
 - have to have both Bar soap ,Liquid soap Body soap
 ## สร้างหน้าเว็บสำรับขายสบู่โดยที่ยังไม่ต้องเชื่อมกับdatabaseก่อนเเต่ให้สร้างdatabaseจำลองเตนรียมไว้
+โหลๆ
