@@ -1,4 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .announcement {
     height: 40px;
-    background-color: rgb(38, 39, 40);
+    background-color: #472D43;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-left {
+    border: 2px red solid;
+    margin-right: 5px;
+}
+
+.nav-center {
+    border: 2px red solid;
+    margin-left: 10px;
+    margin-bottom: 0px;
+}
+
+.nav-bottom {
+    border: blue 2px solid;
+    margin-top: 10px;
 }
