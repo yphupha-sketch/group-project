@@ -1,11 +1,207 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>My Account | Calla Lily</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    
+
+<body class="cl-page">
+
+<header class="cl-nav">
+    <a href="index.html" class="cl-logo">CALLA LILY</a>
+
+    <nav>
+        <a href="index.html">HOME</a>
+        <a href="#">SHOP</a>
+        <a href="tracking.html">TRACK ORDER</a>
+        <a href="user.html" class="active">ACCOUNT</a>
+    </nav>
+</header>
+
+
+<main class="cl-main">
+
+    <section class="cl-container">
+
+        <!-- INTRO -->
+        <div class="account-intro">
+            <div>
+                <p class="cl-eyebrow">MY ACCOUNT</p>
+                <h1>Hello, Wisit.</h1>
+                <p class="cl-muted">
+                    จัดการข้อมูลและติดตามคำสั่งซื้อของคุณได้ในที่เดียว
+                </p>
+            </div>
+
+            <button class="cl-outline-btn">LOG OUT</button>
+        </div>
+
+
+        <!-- LATEST ORDER -->
+        <section class="latest-order">
+
+            <div class="cl-section-head">
+                <div>
+                    <p class="cl-eyebrow">LATEST ORDER</p>
+                    <h2>Your order is on the way.</h2>
+                </div>
+
+                <span class="cl-status">IN TRANSIT</span>
+            </div>
+
+
+            <div class="latest-order-info">
+
+                <div>
+                    <span>ORDER</span>
+                    <strong>#CL240821</strong>
+                </div>
+
+                <div>
+                    <span>ORDER DATE</span>
+                    <strong>21 AUG 2026</strong>
+                </div>
+
+                <div>
+                    <span>TOTAL</span>
+                    <strong>฿590</strong>
+                </div>
+
+                <div>
+                    <span>ARRIVING</span>
+                    <strong>24 AUG 2026</strong>
+                </div>
+
+            </div>
+
+
+            <div class="mini-progress">
+
+                <div class="mini-step done">
+                    <span>✓</span>
+                    <p>Ordered</p>
+                </div>
+
+                <div class="mini-line done"></div>
+
+                <div class="mini-step done">
+                    <span>✓</span>
+                    <p>Packed</p>
+                </div>
+
+                <div class="mini-line done"></div>
+
+                <div class="mini-step current">
+                    <span>3</span>
+                    <p>Shipped</p>
+                </div>
+
+                <div class="mini-line"></div>
+
+                <div class="mini-step">
+                    <span>4</span>
+                    <p>Delivered</p>
+                </div>
+
+            </div>
+
+
+            <a href="tracking.html" class="cl-text-link">
+                TRACK ORDER →
+            </a>
+
+        </section>
+
+
+        <!-- PROFILE + ADDRESS -->
+        <div class="account-grid">
+
+            <section class="cl-clean-card">
+                <div class="cl-section-head">
+                    <div>
+                        <p class="cl-eyebrow">PROFILE</p>
+                        <h2>Personal details</h2>
+                    </div>
+
+                    <button class="cl-link-btn">EDIT</button>
+                </div>
+
+                <div class="detail-list">
+                    <div>
+                        <span>NAME</span>
+                        <p>Wisit Prasinthong</p>
+                    </div>
+
+                    <div>
+                        <span>EMAIL</span>
+                        <p>customer@email.com</p>
+                    </div>
+
+                    <div>
+                        <span>PHONE</span>
+                        <p>08X-XXX-XXXX</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="cl-clean-card">
+                <div class="cl-section-head">
+                    <div>
+                        <p class="cl-eyebrow">DELIVERY</p>
+                        <h2>Shipping address</h2>
+                    </div>
+
+                    <button class="cl-link-btn">EDIT</button>
+                </div>
+
+                <p class="address-name">Wisit Prasinthong</p>
+
+                <p class="cl-muted address-text">
+                    123 ถนนสุขุมวิท<br>
+                    กรุงเทพมหานคร 10260<br>
+                    Thailand
+                </p>
+            </section>
+
+        </div>
+
+
+        <!-- ORDER HISTORY -->
+        <section class="order-history">
+
+            <p class="cl-eyebrow">ORDER HISTORY</p>
+            <h2>Past orders</h2>
+
+            <div class="order-row">
+                <strong>#CL240810</strong>
+                <span>10 AUG 2026</span>
+                <span>฿890</span>
+                <span class="delivered">DELIVERED</span>
+                <a href="#">VIEW →</a>
+            </div>
+
+            <div class="order-row">
+                <strong>#CL240721</strong>
+                <span>21 JUL 2026</span>
+                <span>฿450</span>
+                <span class="delivered">DELIVERED</span>
+                <a href="#">VIEW →</a>
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<footer class="cl-footer">
+    <strong>CALLA LILY</strong>
+    <p>Everyday care, made beautifully simple.</p>
+</footer>
+
 </body>
 </html>
